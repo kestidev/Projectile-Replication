@@ -1,5 +1,5 @@
 [package]
-name = "iitpp-roblox/projectile-replication"
+name = "kestidev/projectile-replication"
 repository = "https://github.com/IITPP-Roblox/Projectile-Replication"
 description = "Manages projectiles on the client and server."
 license = "MIT"
