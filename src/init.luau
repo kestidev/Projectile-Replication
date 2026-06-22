@@ -7,6 +7,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
+local ProjectileUtils = require(script.Utils.ProjectileUtils)
 local Projectile = require(script:WaitForChild("Projectile"))
 local LocalAudio = require(script:WaitForChild("Packages"):WaitForChild("LocalAudio"))
 local LocalTween = require(script:WaitForChild("Packages"):WaitForChild("LocalTween"))
@@ -207,7 +208,8 @@ function ProjectileReplication.Reload(self: ProjectileReplication, Player: Playe
         --Play the reload sound.
         local StartAttachment = Handle:FindFirstChild("StartAttachment")
         if StartAttachment and NewTool.Parent == Character then
-            local PresetModule = Presets:FindFirstChild(ConfigurationData.ProjectilePreset)
+            local SelectedPreset = ProjectileUtils.FetchProjectileTemplate(State, ConfigurationData)
+            local PresetModule = Presets:FindFirstChild(SelectedPreset)
             local ReloadSound = Configuration and ConfigurationData.ReloadSound or (require(PresetModule) :: Types.ProjectilePreset).DefaultReloadSound
             if ReloadSound then
                 LocalAudio:PlayAudio(ReloadSound, StartAttachment)
@@ -435,7 +437,8 @@ function ProjectileReplication.SetUp(self: ProjectileReplication): ()
             LastFireTimeValue.Value = tick()
             LastFireRemainingRoundsValue.Value = (IsCloseToLastFire and LastFireRemainingRoundsValue.Value - 1 or (ConfigurationData.ProjectilesPerRound or 1) - 1)
             RemainingRoundsValue.Value = RemainingRoundsValue.Value - 1
-            self:Fire(StartCFrame, Handle, ConfigurationData.ProjectilePreset, Character)
+            local SelectedPreset = ProjectileUtils.FetchProjectileTemplate(State, ConfigurationData)
+            self:Fire(StartCFrame, Handle, SelectedPreset, Character)
         end)
 
         --Connect requests for reloading.

@@ -5,7 +5,12 @@
 return {
     --Name of the preset of the projectile.
     --The preset must exist in ReplicatedStorage.Data.ProjectilePresets.
-    ProjectilePreset = "DemoProjectile",
+    ProjectilePresets = {
+        ["Disinfector"] = "DemoProjectile",
+        ["Lethal"] = "DemoLethalProjectile"
+    },
+
+    DefaultAdditionalState = "Disinfector",
 
     --Maximum random angle from the aim that the projectile will fire from.
     ProjectileSpread = math.rad(2),

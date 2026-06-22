@@ -4,6 +4,7 @@
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 
+local ProjectileUtils = require(script.Parent.Parent.Parent.Utils.ProjectileUtils)
 local VibrationMotor = require(script.Parent:WaitForChild("Common"):WaitForChild("VibrationMotor"))
 local BaseInput = require(script.Parent:WaitForChild("Input"):WaitForChild("BaseInput"))
 local Types = require(script.Parent.Parent.Parent:WaitForChild("Types"))
@@ -102,7 +103,10 @@ function WeaponState.TryFire(self: WeaponState): ()
     self.LastFireTime = tick()
     self.RemainingRoundsValue.Value = self.RemainingRoundsValue.Value - 1
     for _ = 1, self.Configuration.ProjectilesPerRound or 1 do
-        self.ProjectileReplication:Fire(CFrame.new(self.StartAttachment.WorldPosition, self:GetAim()) * CFrame.Angles(0, 0, math.random() * math.pi * 2) * CFrame.Angles(math.random() * self.Configuration.ProjectileSpread, 0, 0), self.Handle, self.Configuration.ProjectilePreset)
+        local State = self.Tool:FindFirstChild("State") :: Folder?
+        if not State then return end
+        local SelectedPreset = ProjectileUtils.FetchProjectileTemplate(State, self.Configuration)
+        self.ProjectileReplication:Fire(CFrame.new(self.StartAttachment.WorldPosition, self:GetAim()) * CFrame.Angles(0, 0, math.random() * math.pi * 2) * CFrame.Angles(math.random() * self.Configuration.ProjectileSpread, 0, 0), self.Handle, SelectedPreset)
     end
     for _, Motor in self.Motors do
         Motor:Activate(self.Configuration.GamepadVibrationMotorDuration or 1, self.Configuration.GamepadVibrationMotorIntesity or 1)

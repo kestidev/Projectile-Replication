@@ -44,6 +44,13 @@ function Standard.CreateStandardWeapon(WeaponModel: Tool): ()
     ReloadingValue.Value = false
     ReloadingValue.Parent = StateFolder
 
+    if ConfigurationData.DefaultAdditionalState then
+        local AdditionalStateValue = Instance.new("StringValue")
+        AdditionalStateValue.Name = "AdditionalState"
+        AdditionalStateValue.Value = ConfigurationData.DefaultAdditionalState
+        AdditionalStateValue.Parent = StateFolder
+    end
+
     --Clone the standard scripts.
     local ProjectileReplicationReferenceValue = Instance.new("ObjectValue")
     ProjectileReplicationReferenceValue.Name = "ProjectileReplicationReference"

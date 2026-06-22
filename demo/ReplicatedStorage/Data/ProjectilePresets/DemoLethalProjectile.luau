@@ -8,7 +8,7 @@ return {
         LengthStuds = 50,
         Diameter = 0.1,
         Properties = {
-            BrickColor = BrickColor.Green(),
+            BrickColor = BrickColor.Red(),
             Material = Enum.Material.Neon,
         },
     },

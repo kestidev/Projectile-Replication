@@ -29,8 +29,10 @@ export type Projectile = {
 }
 
 export type StandardConfiguration = {
-    ProjectilePreset: string,
     ProjectileSpread: number,
+    ProjectilePreset: string?,
+    ProjectilePresets: { [string]: string }?,
+    DefaultAdditionalState: string?,
     FireDelay: number,
     CooldownTime: number,
     ReloadTime: number,
