@@ -59,6 +59,8 @@ ProjectileReplication.StandardComponents = {
 ProjectileReplication.QueuedProjectiles = {} :: {QueuedProjectileEntry}
 ProjectileReplication.LastLocalAimPosition = nil :: Vector3?
 ProjectileReplication.SetUpCalled = false
+ProjectileReplication._ToolEquippedCallbacks = {} :: {(Tool: Tool, Configuration: Types.StandardConfiguration, State: Folder) -> ()}
+ProjectileReplication._ToolUnequippedCallbacks = {} :: {(Tool: Tool, Configuration: Types.StandardConfiguration, State: Folder) -> ()}
 local UpdateAimFunctions = {}
 setmetatable(UpdateAimFunctions, {__mode="k"})
 
@@ -478,6 +480,22 @@ function ProjectileReplication.SetUp(self: ProjectileReplication): ()
             FireProjectileEvent:FireAllClients(CurrentQueuedProjectiles)
         end)
     end
+end
+
+
+
+--[[
+Registers a callback to be called when a tool is equipped.
+--]]
+function ProjectileReplication.OnToolEquipped(self: ProjectileReplication, Callback: (Tool: Tool, Configuration: Types.StandardConfiguration, State: Folder) -> ()): ()
+    table.insert(self._ToolEquippedCallbacks, Callback)
+end
+
+--[[
+Registers a callback to be called when a tool is unequipped.
+--]]
+function ProjectileReplication.OnToolUnequipped(self: ProjectileReplication, Callback: (Tool: Tool, Configuration: Types.StandardConfiguration, State: Folder) -> ()): ()
+    table.insert(self._ToolUnequippedCallbacks, Callback)
 end
 
 

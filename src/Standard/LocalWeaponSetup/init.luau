@@ -45,9 +45,15 @@ function LocalWeaponSetup.SetupTool(self: LocalWeaponSetup, Tool: Tool): ()
     local CurrentInput: CombinedInput.CombinedInput? = nil
     local Equipped = false
 
+    local State = Tool:WaitForChild("State") :: Folder
+
     --Connect equipping and unequipping the tool.
     Tool.Equipped:Connect(function()
         Equipped = true
+
+        for _, Callback in ProjectileReplication._ToolEquippedCallbacks do
+            task.spawn(Callback, Tool, Configuration, State)
+        end
 
         --Create the crosshair.
         local Crosshair = (UserInputService.VREnabled and VRCrosshair.new(StartAttachment) or MouseCrosshair.new())
@@ -91,6 +97,10 @@ function LocalWeaponSetup.SetupTool(self: LocalWeaponSetup, Tool: Tool): ()
     Tool.Unequipped:Connect(function()
         Equipped = false
         WeaponState:StopFiring()
+
+        for _, Callback in ProjectileReplication._ToolUnequippedCallbacks do
+            task.spawn(Callback, Tool, Configuration, State)
+        end
 
         if CurrentCrosshair then
             CurrentCrosshair:Destroy()
