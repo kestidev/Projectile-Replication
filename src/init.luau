@@ -28,6 +28,7 @@ local BaseCrosshair = require(script:WaitForChild("Standard"):WaitForChild("Loca
 local MouseCrosshair = require(script:WaitForChild("Standard"):WaitForChild("LocalWeaponSetup"):WaitForChild("UI"):WaitForChild("MouseCrosshair"))
 local VRCrosshair = require(script:WaitForChild("Standard"):WaitForChild("LocalWeaponSetup"):WaitForChild("UI"):WaitForChild("VRCrosshair"))
 local WeaponState = require(script:WaitForChild("Standard"):WaitForChild("LocalWeaponSetup"):WaitForChild("WeaponState"))
+local Scope = require(script:WaitForChild("Standard"):WaitForChild("LocalWeaponSetup"):WaitForChild("Scope"))
 local Standard = require(script:WaitForChild("Standard"))
 
 local PlayerBufferedRemoteEventReceiver = NexusBufferedReplication.Receiver.PlayerBufferedRemoteEventReceiver
@@ -54,6 +55,7 @@ ProjectileReplication.StandardComponents = {
             VRCrosshair = VRCrosshair,
         },
         WeaponState = WeaponState,
+        Scope = Scope,
     },
 }
 ProjectileReplication.QueuedProjectiles = {} :: {QueuedProjectileEntry}
@@ -87,6 +89,7 @@ export type BaseCrosshair = BaseCrosshair.BaseCrosshair
 export type MouseCrosshair = MouseCrosshair.MouseCrosshair
 export type VRCrosshair = VRCrosshair.VRCrosshair
 export type WeaponState = WeaponState.WeaponState
+export type Scope = Scope.Scope
 
 export type ProjectileReplication = typeof(ProjectileReplication)
 

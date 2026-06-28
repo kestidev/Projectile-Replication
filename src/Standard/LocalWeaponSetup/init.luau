@@ -9,6 +9,7 @@ local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 
 local WeaponState = require(script:WaitForChild("WeaponState"))
+local Scope = require(script:WaitForChild("Scope"))
 local VibrationMotor = require(script:WaitForChild("Common"):WaitForChild("VibrationMotor"))
 local CombinedInput = require(script:WaitForChild("Input"):WaitForChild("CombinedInput"))
 local GamepadInput = require(script:WaitForChild("Input"):WaitForChild("GamepadInput"))
@@ -43,7 +44,10 @@ function LocalWeaponSetup.SetupTool(self: LocalWeaponSetup, Tool: Tool): ()
 
     local CurrentCrosshair: BaseCrosshair.BaseCrosshair? = nil
     local CurrentInput: CombinedInput.CombinedInput? = nil
+    local CurrentScope: Scope.Scope? = nil
     local Equipped = false
+
+    local ScopeAttachment = Handle:FindFirstChild("ScopeAttachment") :: Attachment?
 
     local State = Tool:WaitForChild("State") :: Folder
 
@@ -61,7 +65,7 @@ function LocalWeaponSetup.SetupTool(self: LocalWeaponSetup, Tool: Tool): ()
         CurrentCrosshair = Crosshair
 
         --Create the input.
-        local Input = CombinedInput.new(MouseInput.new(), TouchInput.new(), GamepadInput.new(Enum.KeyCode.ButtonR2))
+        local Input = CombinedInput.new(MouseInput.new(), TouchInput.new(), GamepadInput.new(Enum.KeyCode.ButtonR2, Enum.KeyCode.ButtonL2))
         Input:ConnectReloadButton(Enum.KeyCode.ButtonY)
         WeaponState:SetInput(Input)
         CurrentInput = Input
@@ -80,6 +84,22 @@ function LocalWeaponSetup.SetupTool(self: LocalWeaponSetup, Tool: Tool): ()
             if not Equipped then return end
             WeaponState:Reload()
         end)
+
+        if ScopeAttachment and not UserInputService.VREnabled then
+            local ToolScope = Scope.new(ScopeAttachment, Configuration)
+            CurrentScope = ToolScope
+            Input.StartScope:Connect(function()
+                if not Equipped then return end
+                ToolScope:Start()
+                WeaponState:SetAimOverride(function()
+                    return ToolScope:GetAimPosition()
+                end)
+            end)
+            Input.EndScope:Connect(function()
+                ToolScope:Stop()
+                WeaponState:SetAimOverride(nil)
+            end)
+        end
 
         --Update the aim if the user isn't in VR.
         if not UserInputService.VREnabled then
@@ -102,6 +122,11 @@ function LocalWeaponSetup.SetupTool(self: LocalWeaponSetup, Tool: Tool): ()
             task.spawn(Callback, Tool, Configuration, State)
         end
 
+        if CurrentScope then
+            CurrentScope:Destroy()
+            CurrentScope = nil
+            WeaponState:SetAimOverride(nil)
+        end
         if CurrentCrosshair then
             CurrentCrosshair:Destroy()
             CurrentCrosshair = nil

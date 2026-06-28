@@ -15,6 +15,7 @@ setmetatable(TouchInput, BaseInput)
 export type TouchInputDisplay = {
     FireButtons: {GuiButton},
     ReloadButtons: {GuiButton},
+    ScopeButtons: {GuiButton},
     Destroy: (self: TouchInputDisplay) -> (),
 }
 export type TouchInput = {
@@ -103,8 +104,31 @@ function TouchInput.CreateDisplay(): TouchInputDisplay
     RightReloadButtonText.TextTransparency = 0.5
     RightReloadButtonText.Parent = RightReloadButton
 
+    local RightScopeButton = Instance.new("ImageButton")
+    RightScopeButton.BackgroundTransparency = 1
+    RightScopeButton.AnchorPoint = Vector2.new(1, 1)
+    RightScopeButton.SizeConstraint = Enum.SizeConstraint.RelativeYY
+    RightScopeButton.Image = "rbxasset://textures/ui/Input/TouchControlsSheetV2.png"
+    RightScopeButton.ImageColor3 = Color3.fromRGB(0, 0, 0)
+    RightScopeButton.ImageRectOffset = Vector2.new(1, 1)
+    RightScopeButton.ImageRectSize = Vector2.new(144, 144)
+    RightScopeButton.Parent = ScreenGui
+
+    local RightScopeButtonText = Instance.new("TextLabel")
+    RightScopeButtonText.BackgroundTransparency = 1
+    RightScopeButtonText.AnchorPoint = Vector2.new(0.5, 0.5)
+    RightScopeButtonText.Name = "ButtonText"
+    RightScopeButtonText.Position = UDim2.new(0.5, 0, 0.5, 0)
+    RightScopeButtonText.Size = UDim2.new(0.75, 0, 0.4, 0)
+    RightScopeButtonText.Font = Enum.Font.SourceSansBold
+    RightScopeButtonText.Text = "SCOPE"
+    RightScopeButtonText.TextScaled = true
+    RightScopeButtonText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    RightScopeButtonText.TextTransparency = 0.5
+    RightScopeButtonText.Parent = RightScopeButton
+
     --Set up the button effects.
-    for _, Button in {LeftFireButton, RightFireButton, RightReloadButton} do
+    for _, Button in {LeftFireButton, RightFireButton, RightReloadButton, RightScopeButton} do
         local ButtonText = Button:FindFirstChild("ButtonText") :: TextLabel
         Button.MouseButton1Down:Connect(function()
             Button.ImageColor3 = Color3.fromRGB(128, 128, 128)
@@ -135,6 +159,7 @@ function TouchInput.CreateDisplay(): TouchInputDisplay
         LeftFireButton.Size = UDim2.new(0, FireButtonSize, 0, FireButtonSize)
         RightFireButton.Size = UDim2.new(0, FireButtonSize, 0, FireButtonSize)
         RightReloadButton.Size = UDim2.new(0, FireButtonSize * 0.8, 0, FireButtonSize * 0.8)
+        RightScopeButton.Size = UDim2.new(0, FireButtonSize * 0.8, 0, FireButtonSize * 0.8)
 
         --Update the button positions.
         if ViewSize.X > ViewSize.Y then
@@ -142,12 +167,14 @@ function TouchInput.CreateDisplay(): TouchInputDisplay
             LeftFireButton.Position = UDim2.new(0, FireButtonSize * 2, 1, FireButtonBottomOffset)
             RightFireButton.Position = UDim2.new(1, (-FireButtonSize * 1.5) - 10, 1, FireButtonBottomOffset)
             RightReloadButton.Position = UDim2.new(1, -(FireButtonSize * 0.4), 1, (IsSmallScreen and -((FireButtonSize * 1.5) + 10) or -FireButtonSize * 1.85))
+            RightScopeButton.Position = UDim2.new(1, -(FireButtonSize * 1.3), 1, (IsSmallScreen and -((FireButtonSize * 1.5) + 10) or -FireButtonSize * 1.85))
             LeftFireButton.Visible = true
         else
             local FireButtonSideOffset = -(FireButtonSize * 0.3)
             local FireButtonBottomOffset = (IsSmallScreen and -20 or (-FireButtonSize * 0.75)) - (1.1 * FireButtonSize)
             RightFireButton.Position = UDim2.new(1, FireButtonSideOffset, 1, FireButtonBottomOffset)
             RightReloadButton.Position = UDim2.new(1, FireButtonSideOffset, 1, FireButtonBottomOffset - (1.1 * FireButtonSize))
+            RightScopeButton.Position = UDim2.new(1, FireButtonSideOffset, 1, FireButtonBottomOffset - (2.2 * FireButtonSize))
             LeftFireButton.Visible = false
         end
     end
@@ -161,6 +188,7 @@ function TouchInput.CreateDisplay(): TouchInputDisplay
     return {
         FireButtons = {LeftFireButton, RightFireButton},
         ReloadButtons = {RightReloadButton},
+        ScopeButtons = {RightScopeButton},
         Destroy = function(self)
             ScreenGui:Destroy()
         end,
@@ -213,6 +241,25 @@ function TouchInput.new(): TouchInput
         for _, ReloadButton in Display.ReloadButtons do
             ReloadButton.MouseButton1Down:Connect(function()
                 self.Reload:Fire()
+            end)
+        end
+
+        for _, ScopeButton in Display.ScopeButtons do
+            local ButtonDown = false
+            ScopeButton.MouseButton1Down:Connect(function()
+                if ButtonDown then return end
+                ButtonDown = true
+                self.StartScope:Fire()
+            end)
+            ScopeButton.MouseButton1Up:Connect(function()
+                if not ButtonDown then return end
+                ButtonDown = false
+                self.EndScope:Fire()
+            end)
+            ScopeButton.MouseLeave:Connect(function()
+                if not ButtonDown then return end
+                ButtonDown = false
+                self.EndScope:Fire()
             end)
         end
     end

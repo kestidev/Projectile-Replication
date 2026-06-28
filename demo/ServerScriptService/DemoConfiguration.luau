@@ -46,6 +46,16 @@ return {
     --If nil, no additional rotation will be applied.
     AimRotationOffset = CFrame.Angles(0, math.rad(-50), 0),
 
+    --Scoping (aiming down sights) settings.
+    --Scoping is only available if the Handle has an Attachment named "ScopeAttachment".
+    --The camera field of view while scoped. If nil, the field of view is left unchanged.
+    ScopeFieldOfView = 50,
+
+    --Look sensitivity while scoped. If nil, defaults are used.
+    ScopeMouseSensitivity = nil,
+    ScopeGamepadSensitivity = nil,
+    ScopeTouchSensitivity = nil,
+
     --Joints that are set when aiming.
     --If nil, no joints will be changed.
     AnimationJoints = {

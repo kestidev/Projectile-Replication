@@ -15,6 +15,8 @@ BaseInput.__index = BaseInput
 export type BaseInput = {
     StartFire: Event.Event<>,
     EndFire: Event.Event<>,
+    StartScope: Event.Event<>,
+    EndScope: Event.Event<>,
     Reload: Event.Event<>,
     Events: {RBXScriptConnection},
 } & typeof(setmetatable({}, BaseInput))
@@ -28,6 +30,8 @@ function BaseInput.new(): BaseInput
     return setmetatable({
         StartFire = Event.new(),
         EndFire = Event.new(),
+        StartScope = Event.new(),
+        EndScope = Event.new(),
         Reload = Event.new(),
         Events = {},
     }, BaseInput) :: BaseInput
@@ -49,6 +53,18 @@ function BaseInput.ConnectReloadButton(self: BaseInput, Button: Enum.KeyCode): (
         if Input.KeyCode ~= Button then return end
         self.Reload:Fire()
     end)
+end
+
+function BaseInput.ConnectScopeButton(self: BaseInput, Button: Enum.KeyCode): ()
+    table.insert(self.Events, UserInputService.InputBegan:Connect(function(Input, Processed)
+        if Processed then return end
+        if Input.KeyCode ~= Button then return end
+        self.StartScope:Fire()
+    end))
+    table.insert(self.Events, UserInputService.InputEnded:Connect(function(Input)
+        if Input.KeyCode ~= Button then return end
+        self.EndScope:Fire()
+    end))
 end
 
 --[[
@@ -80,6 +96,8 @@ function BaseInput.Destroy(self: BaseInput): ()
 
     self.StartFire:Destroy()
     self.EndFire:Destroy()
+    self.StartScope:Destroy()
+    self.EndScope:Destroy()
     self.Reload:Destroy()
 end
 

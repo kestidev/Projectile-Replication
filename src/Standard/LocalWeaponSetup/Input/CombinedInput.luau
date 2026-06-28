@@ -43,6 +43,13 @@ function CombinedInput.new(...: BaseInput.BaseInput): CombinedInput
             if self.CurrentInput ~= Input then return end
             self.EndFire:Fire()
         end))
+        table.insert(self.Events, CurrentInput.StartScope:Connect(function()
+            self.CurrentInput = CurrentInput
+            self.StartScope:Fire()
+        end))
+        table.insert(self.Events, CurrentInput.EndScope:Connect(function()
+            self.EndScope:Fire()
+        end))
         table.insert(self.Events, CurrentInput.Reload:Connect(function()
             self.Reload:Fire()
         end))

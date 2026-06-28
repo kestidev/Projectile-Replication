@@ -32,6 +32,16 @@ function MouseInput.new(): MouseInput
         if Input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
         self.EndFire:Fire()
     end))
+
+    table.insert(self.Events, UserInputService.InputBegan:Connect(function(Input, Processed)
+        if Processed then return end
+        if Input.UserInputType ~= Enum.UserInputType.MouseButton2 then return end
+        self.StartScope:Fire()
+    end))
+    table.insert(self.Events, UserInputService.InputEnded:Connect(function(Input)
+        if Input.UserInputType ~= Enum.UserInputType.MouseButton2 then return end
+        self.EndScope:Fire()
+    end))
     return self
 end
 

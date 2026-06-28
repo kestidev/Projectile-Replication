@@ -16,6 +16,7 @@ export type WeaponState = {
     Firing: boolean,
     LastFireTime: number,
     Input: BaseInput.BaseInput?,
+    AimOverride: (() -> Vector3?)?,
     Motors: {VibrationMotor.VibrationMotor},
     Configuration: Types.StandardConfiguration,
     Tool: Instance,
@@ -58,6 +59,12 @@ function WeaponState.GetAim(self: WeaponState): Vector3
     if UserInputService.VREnabled then
         return ((self.StartAttachment :: Attachment).WorldCFrame * CFrame.new(0, 0, -10000)).Position
     end
+    if self.AimOverride then
+        local OverridePosition = self.AimOverride()
+        if OverridePosition then
+            return OverridePosition
+        end
+    end
     if not self.Input then
         return Vector3.zero
     end
@@ -69,6 +76,10 @@ Sets the input for the weapon state.
 --]]
 function WeaponState.SetInput(self: WeaponState, Input: BaseInput.BaseInput?): ()
     self.Input = Input
+end
+
+function WeaponState.SetAimOverride(self: WeaponState, AimOverride: (() -> Vector3?)?): ()
+    self.AimOverride = AimOverride
 end
 
 --[[

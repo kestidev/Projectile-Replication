@@ -66,6 +66,22 @@ a `Handle`. The `Handle` must have an `Attachment` named `"StartAttachment"`
 and optional `Attachment` for the left arm named `"LeftHandHold"`.
 There also must be a `Configuration` like [the demo configuration](demo/ServerScriptService/DemoConfiguration.luau).
 
+#### Scoping / Aiming Down Sights (Optional)
+If the `Handle` has an `Attachment` named `"ScopeAttachment"`, the weapon can
+be aimed down the sights by holding the right mouse button (PC), `ButtonL2`
+(gamepad), or the on-screen `SCOPE` button (touch). While scoped, the camera is
+moved to the `ScopeAttachment` and follows the player's look input, so the weapon
+naturally points down the barrel. If no `ScopeAttachment` exists, scoping is
+disabled. The following optional `Configuration` fields tune the behavior:
+* `number? ScopeFieldOfView` - Camera field of view while scoped. If `nil`, the
+  field of view is left unchanged (no zoom).
+* `number? ScopeMouseSensitivity` - Degrees of look rotation per pixel of mouse
+  movement while scoped.
+* `number? ScopeGamepadSensitivity` - Degrees of look rotation per second at full
+  thumbstick deflection while scoped.
+* `number? ScopeTouchSensitivity` - Degrees of look rotation per pixel of touch
+  movement while scoped.
+
 ### Nexus VR Character Model (Optional)
 The standard weapons support [Nexus VR Character Model](https://github.com/TheNexusAvenger/Nexus-VR-Character-Model).
 Adding [the loader](https://www.roblox.com/library/1547146240/Nexus-VR-Character-Model)
@@ -85,8 +101,7 @@ Pull requests are open for future enhancements that could be made to the system.
 They have been requested either internally or by members of the Innovation Inc
 Thermal Plant Discord server.
 * Generalized Animations - Animations are currently limited to the hold animation.
-  Reload animations, aiming down scopes, and holding the weapon down for posing
-  are not supported.
+  Reload animations and holding the weapon down for posing are not supported.
 * Acceleration - Projectiles follow a straight path instead of accelerating due
   to gravity or other forces.
 
